@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# Defender for AI — Threat & Security Insights\n\nCe workbook s'appuie sur **Azure Resource Graph** (`SecurityResources` — alertes Microsoft Defender for Cloud), pas sur Log Analytics. Il fonctionne **sans configuration supplémentaire** (contrairement à la table `SecurityAlert` de Log Analytics, qui nécessite un export continu explicite depuis Defender for Cloud).\n\nPrérequis : **Microsoft Defender for AI Services** activé (tier Standard) sur l'abonnement contenant vos ressources Azure AI Foundry / Cognitive Services.\n\nAlertes couvertes (préfixes `AI.Azure_*` et `AI.AIModelScan_*`) : tentatives de jailbreak, vol d'identifiants dans une réponse IA, injection de prompt (ASCII smuggling), URL de phishing partagée par le modèle, accès depuis IP suspecte/Tor, attaques \"wallet\" (abus de coût), invocation d'outil anormale, reconnaissance LLM, malware dans un modèle uploadé.\n\nRéférence : [Alerts for AI services (Microsoft Learn)](https://learn.microsoft.com/azure/defender-for-cloud/alerts-ai-workloads)"
+        "json": "# Defender for AI — Threat & Security Insights\n\nThis workbook relies on **Azure Resource Graph** (`SecurityResources` — Microsoft Defender for Cloud alerts), not on Log Analytics. It works **with no additional configuration** (unlike Log Analytics' `SecurityAlert` table, which requires an explicit continuous export from Defender for Cloud).\n\nPrerequisite: **Microsoft Defender for AI Services** enabled (Standard tier) on the subscription containing your Azure AI Foundry / Cognitive Services resources.\n\nAlerts covered (`AI.Azure_*` and `AI.AIModelScan_*` prefixes): jailbreak attempts, credential theft in an AI response, prompt injection (ASCII smuggling), phishing URL shared by the model, access from suspicious IP/Tor, \"wallet\" attacks (cost abuse), abnormal tool invocation, LLM reconnaissance, malware in an uploaded model.\n\nReference: [Alerts for AI services (Microsoft Learn)](https://learn.microsoft.com/azure/defender-for-cloud/alerts-ai-workloads)"
       },
       "name": "intro"
     },
@@ -76,7 +76,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Détail des alertes (les plus récentes)\nInclut la ressource visée et l'horodatage — utile pour investiguer un incident précis et corréler avec le workbook Token Consumption (mêmes plages horaires)."
+        "json": "## Alert details (most recent)\nIncludes the targeted resource and timestamp — useful for investigating a specific incident and correlating with the Token Consumption workbook (same time ranges)."
       },
       "name": "detail-header"
     },
@@ -95,14 +95,14 @@
     {
       "type": 1,
       "content": {
-        "json": "## État des extensions Defender for AI Services\nVérifie que les 3 extensions du plan sont dans l'état attendu (`AIPromptEvidence` doit être **On** pour capturer les prompts/réponses associés aux alertes ; `AIModelScanner` et `AIPromptSharingWithPurview` sont optionnels selon vos besoins).\n\n👉 Cette information n'est pas exposée par Resource Graph — vérifier via CLI :\n```bash\naz security pricing show -n AI --query \"{tier:pricingTier, extensions:extensions}\"\n```"
+        "json": "## Defender for AI Services extensions status\nChecks that the plan's 3 extensions are in the expected state (`AIPromptEvidence` must be **On** to capture prompts/responses associated with alerts; `AIModelScanner` and `AIPromptSharingWithPurview` are optional depending on your needs).\n\n👉 This information is not exposed by Resource Graph — check via CLI:\n```bash\naz security pricing show -n AI --query \"{tier:pricingTier, extensions:extensions}\"\n```"
       },
       "name": "extensions-note"
     },
     {
       "type": 1,
       "content": {
-        "json": "⚠️ **Limite connue** : les alertes Defender ne remontent qu'après détection effective d'un comportement suspect — un test de prompt injection \"léger\" peut ne déclencher aucune alerte si le contenu n'est pas jugé assez malveillant par les modèles de détection. L'absence d'alerte ne signifie pas l'absence de risque, seulement l'absence de détection à ce jour."
+        "json": "⚠️ **Known limitation**: Defender alerts only surface after a suspicious behavior is actually detected — a \"light\" prompt injection test may trigger no alert if the content isn't deemed malicious enough by the detection models. Absence of an alert does not mean absence of risk, only absence of detection so far."
       },
       "name": "limitation-note"
     }

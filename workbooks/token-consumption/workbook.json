@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# Foundry Token Consumption & Defender for AI Cost\n\nCe workbook s'appuie sur les logs de diagnostic du compte Cognitive Services / Azure AI Foundry sous-jacent (catégorie `AzureOpenAIRequestUsage` de `AzureDiagnostics`).\n\n**Limite connue** : ces logs identifient le *déploiement de modèle* (`ModelDeploymentName`) mais pas l'*agent Foundry* appelant — plusieurs agents peuvent partager le même déploiement. Pour une répartition par agent, il faut activer le tracing (Application Insights + OpenTelemetry GenAI) sur le projet.\n\nDefender for AI Services facture **$0.0008 / 1 000 tokens** traités par les ressources IA protégées (source: Azure Retail Prices API, meter `Standard Tokens`), après le seuil d'essai (30 jours ou 75 milliards de tokens, selon le premier atteint). Le total de tokens ci-dessous permet donc d'estimer et corréler ce coût.\n\n👉 **Avant utilisation** : sélectionnez votre workspace Log Analytics dans le paramètre `Workspace` ci-dessous. Voir [prérequis](../../docs/prerequisites.md)."
+        "json": "# Foundry Token Consumption & Defender for AI Cost\n\nThis workbook relies on the diagnostic logs of the underlying Cognitive Services / Azure AI Foundry account (`AzureOpenAIRequestUsage` category of `AzureDiagnostics`).\n\n**Known limitation**: these logs identify the *model deployment* (`ModelDeploymentName`) but not the calling *Foundry agent* — multiple agents can share the same deployment. For a per-agent breakdown, you need to enable tracing (Application Insights + OpenTelemetry GenAI) on the project.\n\nDefender for AI Services charges **$0.0008 / 1,000 tokens** processed by protected AI resources (source: Azure Retail Prices API, meter `Standard Tokens`), after the trial threshold (30 days or 75 billion tokens, whichever comes first). The total token count below lets you estimate and correlate this cost.\n\n👉 **Before use**: select your Log Analytics workspace in the `Workspace` parameter below. See [prerequisites](../../docs/prerequisites.md)."
       },
       "name": "intro"
     },
@@ -98,14 +98,14 @@
     {
       "type": 1,
       "content": {
-        "json": "⚠️ **Note** : si plusieurs agents Foundry partagent le même déploiement de modèle, la répartition exacte par agent n'est pas possible sans tracing App Insights (OpenTelemetry GenAI)."
+        "json": "⚠️ **Note**: if multiple Foundry agents share the same model deployment, an exact per-agent breakdown is not possible without App Insights tracing (OpenTelemetry GenAI)."
       },
       "name": "shared-deployment-note"
     },
     {
       "type": 1,
       "content": {
-        "json": "## Répartition Prompt / Generated / Cached\nPermet de comprendre **d'où vient le coût** : un ratio Prompt élevé indique des contextes volumineux (RAG, historique de conversation, system prompt long) ; un ratio Generated élevé indique des réponses longues ou une limite de tokens de sortie élevée."
+        "json": "## Prompt / Generated / Cached breakdown\nHelps understand **where the cost comes from**: a high Prompt ratio indicates large contexts (RAG, conversation history, long system prompt); a high Generated ratio indicates long responses or a high output token limit."
       },
       "name": "prompt-vs-generated-header"
     },
@@ -136,7 +136,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Latence par déploiement\n`timeToFirstTokenMs` (temps avant le premier token — reflète le temps de traitement du prompt) et `timeToLastTokenMs` (temps total de génération). Une hausse peut indiquer une surcharge du déploiement ou un contexte trop volumineux."
+        "json": "## Latency by deployment\n`timeToFirstTokenMs` (time before the first token — reflects prompt processing time) and `timeToLastTokenMs` (total generation time). An increase can indicate deployment overload or an overly large context."
       },
       "name": "latency-header"
     },
@@ -160,7 +160,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Répartition horaire (heatmap jour × heure)\nIdentifie les pics d'usage récurrents — trafic anormal la nuit (script/boucle oublié), pic de charge à une heure précise, etc."
+        "json": "## Hourly breakdown (day × hour heatmap)\nIdentifies recurring usage spikes — abnormal nighttime traffic (forgotten script/loop), load spike at a specific hour, etc."
       },
       "name": "heatmap-header"
     },
@@ -179,7 +179,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Top requêtes les plus coûteuses\nRepère les prompts individuels anormalement volumineux (contexte trop long, boucle d'agent, fuite de données dans le prompt)."
+        "json": "## Top most costly requests\nSpots individual prompts that are abnormally large (context too long, agent loop, data leak in the prompt)."
       },
       "name": "top-requests-header"
     },
@@ -203,7 +203,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Projection coût Defender for AI sur 30 jours\nExtrapolation linéaire simple : moyenne des tokens/jour observée sur la période sélectionnée × 30, converti en coût estimé à $0.0008/1K tokens. À prendre comme ordre de grandeur, pas une facture exacte."
+        "json": "## Defender for AI 30-day cost projection\nSimple linear extrapolation: average tokens/day observed over the selected period × 30, converted to an estimated cost at $0.0008/1K tokens. Treat this as an order of magnitude, not an exact bill."
       },
       "name": "projection-header"
     },
@@ -239,7 +239,7 @@
     {
       "type": 1,
       "content": {
-        "json": "ℹ️ Sur certains comptes, `statusCode`/`responseCode` ne sont pas renseignés dans ce schéma (`ResultType`/`Level` vides) — vérifiez sur votre propre compte avant de vous y fier pour isoler les erreurs 429/5xx. Pour le suivi des erreurs, activer la métrique `AzureOpenAIRequests` et/ou consulter Metrics Explorer."
+        "json": "ℹ️ On some accounts, `statusCode`/`responseCode` are not populated in this schema (`ResultType`/`Level` empty) — check on your own account before relying on them to isolate 429/5xx errors. For error tracking, enable the `AzureOpenAIRequests` metric and/or check Metrics Explorer."
       },
       "name": "errors-note"
     }

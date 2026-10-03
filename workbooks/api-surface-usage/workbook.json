@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# API Surface & Request Type Usage\n\nCe workbook s'appuie sur la catégorie **`RequestResponse`** de `AzureDiagnostics` (compte Azure AI Foundry / Cognitive Services) pour donner une vue de **quel type d'API est réellement utilisé** : création de réponses d'agent (`create_response`), embeddings, gestion des assistants, appels de gestion de projet, etc.\n\nComplémentaire au workbook **Token Consumption** (qui se concentre sur les tokens) : ici on regarde le **volume et la taille des requêtes/réponses par type d'opération**, utile pour repérer un usage inattendu (ex: appels de listing d'assistants en boucle, embeddings redondants) ou dimensionner l'infrastructure.\n\n⚠️ **Limite connue** : ces logs ne descendent pas au niveau de l'appel d'outil individuel (MCP `mcp_call`, `mcp_list_tools`, etc.) — cette granularité n'existe qu'en tracing (Application Insights + OpenTelemetry GenAI côté projet Foundry), pas dans les logs de diagnostic du compte.\n\n👉 **Avant utilisation** : sélectionnez votre workspace Log Analytics dans le paramètre `Workspace` ci-dessous. Voir [prérequis](../../docs/prerequisites.md)."
+        "json": "# API Surface & Request Type Usage\n\nThis workbook relies on the **`RequestResponse`** category of `AzureDiagnostics` (Azure AI Foundry / Cognitive Services account) to give a view of **which API type is actually used**: agent response creation (`create_response`), embeddings, assistant management, project management calls, etc.\n\nComplementary to the **Token Consumption** workbook (which focuses on tokens): here we look at the **volume and size of requests/responses by operation type**, useful for spotting unexpected usage (e.g. assistant listing calls in a loop, redundant embeddings) or sizing infrastructure.\n\n⚠️ **Known limitation**: these logs do not go down to the individual tool call level (MCP `mcp_call`, `mcp_list_tools`, etc.) — this granularity only exists with tracing (Application Insights + OpenTelemetry GenAI on the Foundry project side), not in the account's diagnostic logs.\n\n👉 **Before use**: select your Log Analytics workspace in the `Workspace` parameter below. See [prerequisites](../../docs/prerequisites.md)."
       },
       "name": "intro"
     },
@@ -68,7 +68,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Répartition par type d'opération\nVolume d'appels par `OperationName` réel observé : `create_response` (invocation d'agent), `Embeddings_Create`, `List_Assistants`, `Projects_Wildcard_Get/Post` (gestion de projet), etc."
+        "json": "## Breakdown by operation type\nCall volume by actual observed `OperationName`: `create_response` (agent invocation), `Embeddings_Create`, `List_Assistants`, `Projects_Wildcard_Get/Post` (project management), etc."
       },
       "name": "operations-header"
     },
@@ -99,7 +99,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Taille des requêtes/réponses par opération\nRepère les opérations qui transfèrent le plus de volume — utile pour comprendre l'empreinte réseau et identifier des payloads anormalement gros (contexte trop long, réponse verbeuse)."
+        "json": "## Request/response size by operation\nSpots the operations transferring the most volume — useful for understanding network footprint and identifying abnormally large payloads (context too long, verbose response)."
       },
       "name": "payload-header"
     },
@@ -123,7 +123,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Répartition par caller (objectId / callerObjectId)\nIdentifie quel principal (utilisateur, service principal, ou identité managée de l'agent) génère le plus d'appels — utile pour distinguer trafic humain (Playground) vs trafic applicatif/agent automatisé."
+        "json": "## Breakdown by caller (objectId / callerObjectId)\nIdentifies which principal (user, service principal, or agent's managed identity) generates the most calls — useful for distinguishing human traffic (Playground) from automated application/agent traffic."
       },
       "name": "callers-header"
     },
