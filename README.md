@@ -47,7 +47,7 @@ az resource create \
 
 ## Validated data schema
 
-The KQL queries in this repo are built and tested against the **actual schema** observed on an Azure AI Foundry account (`AzureOpenAIRequestUsage` and `RequestResponse` categories of the `AzureDiagnostics` table, legacy mode), not against generic documentation. See [prerequisites](docs/prerequisites.md#5-limites-connues-schéma-vérifié-en-conditions-réelles) for details on known limitations and common pitfalls (JSON arrays, fields missing depending on the account, etc.).
+The KQL queries in this repo are built and tested against the **actual schema** observed on an Azure AI Foundry account (`AzureOpenAIRequestUsage` and `RequestResponse` categories of the `AzureDiagnostics` table, legacy mode), not against generic documentation. See [prerequisites](docs/prerequisites.md#5-known-limitations-schema-verified-under-real-conditions) for details on known limitations and common pitfalls (JSON arrays, fields missing depending on the account, etc.).
 
 ## Positioning relative to native Foundry / Defender for Cloud
 
