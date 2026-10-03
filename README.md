@@ -1,28 +1,28 @@
 # Azure Foundry Observability Workbooks
 
-Collection de templates **Azure Monitor Workbook** réutilisables pour l'observabilité des agents **Azure AI Foundry** — consommation de tokens, coûts, latence, Microsoft Defender for AI Services, et plus à venir.
+Collection of reusable **Azure Monitor Workbook** templates for observability of **Azure AI Foundry** agents — token consumption, costs, latency, Microsoft Defender for AI Services, and more to come.
 
-Pensé pour être réutilisé rapidement d'un client/projet à l'autre : chaque workbook est un template JSON générique, sans dépendance codée en dur sur un abonnement ou un workspace.
+Designed to be quickly reused from one client/project to another: each workbook is a generic JSON template, with no hard-coded dependency on a subscription or workspace.
 
-## Contenu
+## Contents
 
-| Workbook | Description | Lien |
+| Workbook | Description | Link |
 |---|---|---|
-| **Token Consumption** | Conso de tokens par déploiement de modèle, coût Defender for AI estimé (temps réel + projection 30j), latence, répartition prompt/generated/cached, heatmap horaire, top requêtes coûteuses, callers | [`workbooks/token-consumption/workbook.json`](workbooks/token-consumption/workbook.json) |
-| **Defender for AI Threat Insights** | Alertes de sécurité Defender for AI (jailbreak, injection de prompt, vol d'identifiants, IP suspecte, attaques wallet, etc.) via Azure Resource Graph — aucune configuration Log Analytics requise | [`workbooks/defender-ai-threat-insights/workbook.json`](workbooks/defender-ai-threat-insights/workbook.json) |
-| **API Surface & Request Type Usage** | Répartition du trafic par type d'opération (création de réponse d'agent, embeddings, gestion d'assistants), taille des payloads, callers par principal — complète la vue tokens avec une vue "surface API" | [`workbooks/api-surface-usage/workbook.json`](workbooks/api-surface-usage/workbook.json) |
+| **Token Consumption** | Token usage per model deployment, estimated Defender for AI cost (real-time + 30-day projection), latency, prompt/generated/cached breakdown, hourly heatmap, top costly requests, callers | [`workbooks/token-consumption/workbook.json`](workbooks/token-consumption/workbook.json) |
+| **Defender for AI Threat Insights** | Defender for AI security alerts (jailbreak, prompt injection, credential theft, suspicious IP, wallet attacks, etc.) via Azure Resource Graph — no Log Analytics configuration required | [`workbooks/defender-ai-threat-insights/workbook.json`](workbooks/defender-ai-threat-insights/workbook.json) |
+| **API Surface & Request Type Usage** | Traffic breakdown by operation type (agent response creation, embeddings, assistant management), payload size, callers by principal — complements the token view with an "API surface" view | [`workbooks/api-surface-usage/workbook.json`](workbooks/api-surface-usage/workbook.json) |
 
-## Utilisation rapide
+## Quick start
 
-1. Vérifier les [prérequis](docs/prerequisites.md) (diagnostic settings, permissions).
-2. Portail Azure → **Monitor** (ou directement sur la ressource Foundry) → **Workbooks** → **New**.
-3. Cliquer sur l'icône **Advanced Editor** (`</>`) dans la barre d'outils.
-4. Coller le contenu du fichier JSON du workbook souhaité.
-5. **Apply** puis **Done Editing**.
-6. Sélectionner votre **workspace Log Analytics** dans le paramètre `Workspace` en haut du workbook.
-7. **Save** en choisissant le resource group cible.
+1. Check the [prerequisites](docs/prerequisites.md) (diagnostic settings, permissions).
+2. Azure portal → **Monitor** (or directly on the Foundry resource) → **Workbooks** → **New**.
+3. Click the **Advanced Editor** icon (`</>`) in the toolbar.
+4. Paste the contents of the desired workbook's JSON file.
+5. **Apply** then **Done Editing**.
+6. Select your **Log Analytics workspace** in the `Workspace` parameter at the top of the workbook.
+7. **Save**, choosing the target resource group.
 
-## Déploiement via CLI (optionnel)
+## CLI deployment (optional)
 
 ```bash
 az resource create \
@@ -37,7 +37,7 @@ az resource create \
     "kind": "shared",
     "properties": {
       "displayName": "Foundry Token Consumption",
-      "serializedData": "<contenu-du-json-en-string-echappee>",
+      "serializedData": "<escaped-json-content-as-string>",
       "category": "workbook",
       "sourceId": "<log-analytics-workspace-resource-id>",
       "version": "1.0"
@@ -45,22 +45,22 @@ az resource create \
   }'
 ```
 
-## Schéma de données validé
+## Validated data schema
 
-Les requêtes KQL de ce repo sont construites et testées contre le **schéma réel** observé sur un compte Azure AI Foundry (catégories `AzureOpenAIRequestUsage` et `RequestResponse` de la table `AzureDiagnostics`, mode legacy), pas contre une documentation générique. Voir [prérequis](docs/prerequisites.md#5-limites-connues-schéma-vérifié-en-conditions-réelles) pour le détail des limites connues et pièges courants (arrays JSON, champs absents selon les comptes, etc.).
+The KQL queries in this repo are built and tested against the **actual schema** observed on an Azure AI Foundry account (`AzureOpenAIRequestUsage` and `RequestResponse` categories of the `AzureDiagnostics` table, legacy mode), not against generic documentation. See [prerequisites](docs/prerequisites.md#5-limites-connues-schéma-vérifié-en-conditions-réelles) for details on known limitations and common pitfalls (JSON arrays, fields missing depending on the account, etc.).
 
-## Positionnement vis-à-vis du natif Foundry / Defender for Cloud
+## Positioning relative to native Foundry / Defender for Cloud
 
-Ces workbooks sont conçus pour **ne pas faire doublon** avec :
-- Le dashboard natif **Application analytics** de Foundry (`Monitoring` dans le portail Foundry) — qui nécessite un Application Insights connecté au projet et se base sur le tracing, pas sur les logs de diagnostic du compte Cognitive Services.
-- Les workbooks génériques de compliance/posture de Defender for Cloud — qui ne couvrent pas les alertes AI threat protection spécifiquement.
+These workbooks are designed to **avoid duplicating**:
+- Foundry's native **Application analytics** dashboard (`Monitoring` in the Foundry portal) — which requires an Application Insights instance connected to the project and relies on tracing, not on the Cognitive Services account's diagnostic logs.
+- Defender for Cloud's generic compliance/posture workbooks — which do not specifically cover AI threat protection alerts.
 
-Chaque workbook de ce repo fonctionne **sans tracing App Insights**, à partir des logs de diagnostic natifs du compte (`AzureDiagnostics`) ou d'Azure Resource Graph.
+Each workbook in this repo works **without App Insights tracing**, relying instead on the account's native diagnostic logs (`AzureDiagnostics`) or on Azure Resource Graph.
 
-## Contribuer
+## Contributing
 
-Les contributions sont bienvenues : nouveau workbook, amélioration d'une requête, correction de schéma. Merci d'ajouter tout nouveau workbook dans son propre dossier sous `workbooks/<nom>/` avec un `workbook.json` et de documenter ses prérequis spécifiques s'ils diffèrent de ceux du repo.
+Contributions are welcome: new workbooks, query improvements, schema fixes. Please add any new workbook in its own folder under `workbooks/<name>/` with a `workbook.json`, and document its specific prerequisites if they differ from the repo's.
 
-## Licence
+## License
 
 [MIT](LICENSE)
